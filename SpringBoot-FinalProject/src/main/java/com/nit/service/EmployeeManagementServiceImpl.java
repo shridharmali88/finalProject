@@ -56,7 +56,7 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 		logger.debug(AppConstants.REPO_CALL_DONE);
 		if (employeeEntity != null) {
 			logger.debug(AppConstants.METHOD_ENDED);
-			return employeeEntity.getEmployeeId() > 0;
+			return employeeEntity.getEmployeeId() == 0;
 		}
 		logger.debug(AppConstants.METHOD_ENDED);
 		return true;
