@@ -7,9 +7,15 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "STATE_MASTER")
 public class StateEntity{
