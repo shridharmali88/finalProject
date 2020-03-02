@@ -1,0 +1,44 @@
+logging:
+  level:
+    com:
+      nit: DEBUG
+    org:
+      springframework: ERROR
+
+server:
+  port: 8585
+
+spring:
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: malishridharrocks@gmail.com
+    password: Shubhshri@2110
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+    test-connection: false
+
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    password: User123
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: USER_MGMT_DEV
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  main:
+    banner-mode: 'off'
+
+  mvc:
+    view:
+      prefix: /WEB-INF/pages/
+      suffix: .jsp

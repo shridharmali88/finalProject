@@ -2,6 +2,9 @@ package com.nit.command;
 
 import java.util.Date;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +22,7 @@ public class Employee {
 	private String lastName;
 	private String email;
 	private Long phoneNumber;
+	@Temporal(TemporalType.DATE)
 	private Date dob;
 	private String gender;
 	private Integer countryNumber;

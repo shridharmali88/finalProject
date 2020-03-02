@@ -1,5 +1,8 @@
 package com.nit.service;
 
+import java.util.UUID;
+import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -11,13 +14,17 @@ import com.nit.command.UnlockEmployeeAccount;
 import com.nit.constants.AppConstants;
 import com.nit.entity.EmployeeEntity;
 import com.nit.repo.EmployeeEntityRepository;
+import com.nit.util.MailUtil;
 
 @Service
 public class EmployeeManagementServiceImpl implements EmployeeManagementService {
 	private Logger logger = LoggerFactory.getLogger(EmployeeManagementServiceImpl.class);
+	private Supplier<String> tempPassword= ()->UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6);
 	@Autowired
 	private EmployeeEntityRepository empRepo;
-
+	@Autowired
+	private MailUtil mailUtil;
+	
 	@Override
 	public boolean unlockEmployeeAccount(UnlockEmployeeAccount unlockEmployeeAccount) {
 		logger.debug(AppConstants.METHOD_START);
@@ -38,10 +45,13 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	public boolean registerEmployee(Employee employee) {
 		logger.debug(AppConstants.METHOD_START);
 		EmployeeEntity employeeEntity = new EmployeeEntity();
+		employeeEntity.setAccountStatus(AppConstants.ACCOUNT_STATUS_LOCKED);
+		employeeEntity.setPassword(tempPassword.get());
 		BeanUtils.copyProperties(employee, employeeEntity);		
 		EmployeeEntity savedEntity = empRepo.save(employeeEntity);
 		logger.debug(AppConstants.METHOD_START);
 		if (savedEntity != null && savedEntity.getEmployeeId() > 0) {
+			mailUtil.sendEmail(savedEntity);
 			logger.debug(AppConstants.METHOD_ENDED);
 			return true;
 		}
@@ -53,10 +63,11 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	public boolean isUniqueEmail(String email) {
 		logger.debug(AppConstants.METHOD_START);
 		EmployeeEntity employeeEntity = empRepo.findByEmail(email);
+		System.out.println(employeeEntity);
 		logger.debug(AppConstants.REPO_CALL_DONE);
 		if (employeeEntity != null) {
 			logger.debug(AppConstants.METHOD_ENDED);
-			return employeeEntity.getEmployeeId() == 0;
+			return false;
 		}
 		logger.debug(AppConstants.METHOD_ENDED);
 		return true;

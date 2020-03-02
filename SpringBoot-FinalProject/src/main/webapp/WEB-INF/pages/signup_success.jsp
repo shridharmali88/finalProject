@@ -8,8 +8,11 @@
 <title>SignUp Form</title>
 </head>
 <body bgcolor="lightblue">
-		<br>Done<br><br><br>
 
+	<br>
+	<br> ${msg}
+	<br>
+	<br>
 	<a href="welcome.htm">Home</a>
 </body>
 </html>
