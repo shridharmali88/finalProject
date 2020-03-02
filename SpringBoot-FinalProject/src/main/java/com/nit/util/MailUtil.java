@@ -7,6 +7,8 @@ import java.io.Reader;
 
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,10 +19,12 @@ import com.nit.entity.EmployeeEntity;
 
 @Component
 public class MailUtil {
+	private Logger logger =LoggerFactory.getLogger(MailUtil.class);
 	@Autowired
 	private JavaMailSender mailSender;
 
 	public boolean sendEmail(EmployeeEntity emp) {
+		logger.debug(AppConstants.METHOD_START);
 		MimeMessage mimeMsg = null;
 		MimeMessageHelper helper=null; 
 		try {
@@ -31,6 +35,8 @@ public class MailUtil {
 			helper.setSubject(AppConstants.MAIL_SUB);
 			helper.setText(mailBody(emp),true);
 			mailSender.send(mimeMsg);
+			logger.info(AppConstants.MAIL_SENT);
+			logger.debug(AppConstants.METHOD_ENDED);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -39,6 +45,7 @@ public class MailUtil {
 	}
 
 	private String mailBody(EmployeeEntity entity) throws Exception {
+		logger.debug(AppConstants.METHOD_START);
 		Reader fileReader = null;
 		BufferedReader br = null;
 		String mailBody = new String();
@@ -48,6 +55,7 @@ public class MailUtil {
 			builder = new StringBuilder();
 			// get Reader
 			fileReader = new FileReader(new File(this.getClass().getClassLoader().getResource("MAIL_BODY_TEMPLATE.txt").getFile()));
+			logger.info(AppConstants.MAIL_BODY_TEMPLETE_LOADED);
 			br = new BufferedReader(fileReader);
 			mailBody = br.readLine();
 			while (mailBody != null) {
@@ -60,12 +68,13 @@ public class MailUtil {
 								.replace("{LNAME}", entity.getLastName())
 								.replace("{USER_MAIL}", entity.getEmail())
 								.replace("{TMP_PWD}", entity.getPassword());
+			logger.info(AppConstants.MAIL_BODY_READY);
 		} finally {
 			// close stream
 			if (br != null)
 				br.close();
 		}
-
+		logger.debug(AppConstants.METHOD_ENDED);
 		return mailBody;
 	}
 }

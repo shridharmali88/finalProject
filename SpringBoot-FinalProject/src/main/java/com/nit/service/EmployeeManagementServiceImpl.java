@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nit.command.Employee;
 import com.nit.command.UnlockEmployeeAccount;
@@ -17,9 +19,10 @@ import com.nit.repo.EmployeeEntityRepository;
 import com.nit.util.MailUtil;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRED)
 public class EmployeeManagementServiceImpl implements EmployeeManagementService {
 	private Logger logger = LoggerFactory.getLogger(EmployeeManagementServiceImpl.class);
-	private Supplier<String> tempPassword= ()->UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6);
+	private Supplier<String> tempPassword= ()->UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6).toUpperCase();
 	@Autowired
 	private EmployeeEntityRepository empRepo;
 	@Autowired
@@ -45,8 +48,8 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 	public boolean registerEmployee(Employee employee) {
 		logger.debug(AppConstants.METHOD_START);
 		EmployeeEntity employeeEntity = new EmployeeEntity();
-		employeeEntity.setAccountStatus(AppConstants.ACCOUNT_STATUS_LOCKED);
-		employeeEntity.setPassword(tempPassword.get());
+		employee.setAccountStatus(AppConstants.ACCOUNT_STATUS_LOCKED);
+		employee.setPassword(tempPassword.get());
 		BeanUtils.copyProperties(employee, employeeEntity);		
 		EmployeeEntity savedEntity = empRepo.save(employeeEntity);
 		logger.debug(AppConstants.METHOD_START);
