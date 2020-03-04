@@ -22,18 +22,47 @@ import com.nit.util.MailUtil;
 @Transactional(propagation = Propagation.REQUIRED)
 public class EmployeeManagementServiceImpl implements EmployeeManagementService {
 	private Logger logger = LoggerFactory.getLogger(EmployeeManagementServiceImpl.class);
-	private Supplier<String> tempPassword= ()->UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6).toUpperCase();
+	private Supplier<String> tempPassword = () -> UUID.randomUUID().toString().replaceAll("-", "").substring(0, 6)
+			.toUpperCase();
 	@Autowired
 	private EmployeeEntityRepository empRepo;
 	@Autowired
 	private MailUtil mailUtil;
 	
 	@Override
+	public boolean sendPwdToEmail(String email) {
+		logger.debug(AppConstants.METHOD_START);
+		EmployeeEntity employeeEntity = empRepo.findByEmail(email);
+		logger.debug(AppConstants.REPO_CALL_DONE);
+		boolean isSent = mailUtil.sendPasswordToEmail(employeeEntity);
+		logger.debug(AppConstants.METHOD_START);
+		return isSent;
+	}
+
+	@Override
+	public String fetchEmpByEmailAndPassword(String email, String password) {
+		logger.debug(AppConstants.METHOD_START);
+		String msg = null;
+		EmployeeEntity returnedEntity = empRepo.findByEmailAndPassword(email, password);
+		logger.debug(AppConstants.REPO_CALL_DONE);
+		if (returnedEntity == null) {
+			msg = AppConstants.INVALID_CREDIENTIALS;
+		} else {
+			if(returnedEntity.getAccountStatus().equals(AppConstants.ACCOUNT_STATUS_LOCKED))
+				msg = AppConstants.ACCOUNT_STATUS_LOCKED;
+			else
+				msg = AppConstants.LOGGING_SUCCESS;
+		}
+		logger.debug(AppConstants.METHOD_ENDED);
+		return msg;
+	}
+
+	@Override
 	public boolean unlockEmployeeAccount(UnlockEmployeeAccount unlockEmployeeAccount) {
 		logger.debug(AppConstants.METHOD_START);
 		EmployeeEntity employeeEntity = empRepo.findByEmail(unlockEmployeeAccount.getEmail());
 		logger.debug(AppConstants.REPO_CALL_DONE);
-		if(employeeEntity !=null && employeeEntity.getPassword().equals(unlockEmployeeAccount.getTempPassword())) {
+		if (employeeEntity != null && employeeEntity.getPassword().equals(unlockEmployeeAccount.getTempPassword())) {
 			employeeEntity.setAccountStatus(AppConstants.ACCOUNT_STATUS_UNLOCKED);
 			employeeEntity.setPassword(unlockEmployeeAccount.getNewPassword());
 			empRepo.save(employeeEntity);
@@ -43,14 +72,14 @@ public class EmployeeManagementServiceImpl implements EmployeeManagementService 
 		logger.debug(AppConstants.METHOD_ENDED);
 		return false;
 	}
-	
+
 	@Override
 	public boolean registerEmployee(Employee employee) {
 		logger.debug(AppConstants.METHOD_START);
 		EmployeeEntity employeeEntity = new EmployeeEntity();
 		employee.setAccountStatus(AppConstants.ACCOUNT_STATUS_LOCKED);
 		employee.setPassword(tempPassword.get());
-		BeanUtils.copyProperties(employee, employeeEntity);		
+		BeanUtils.copyProperties(employee, employeeEntity);
 		EmployeeEntity savedEntity = empRepo.save(employeeEntity);
 		logger.debug(AppConstants.METHOD_START);
 		if (savedEntity != null && savedEntity.getEmployeeId() > 0) {

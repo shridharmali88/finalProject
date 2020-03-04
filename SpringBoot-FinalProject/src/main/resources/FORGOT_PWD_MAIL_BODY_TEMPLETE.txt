@@ -1,0 +1,10 @@
+Dear {FNAME}, {LNAME}:<br/>
+
+Here are your details:<br/>
+
+<b>UserName</b> : {USER_MAIL}<br/>
+<b>Password</b>	: {PWD}<br/><br/>
+
+<br/>
+Thanks and Regards,<br/>
+Teklead Family <br/>

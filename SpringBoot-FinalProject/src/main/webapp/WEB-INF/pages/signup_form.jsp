@@ -33,9 +33,12 @@
 		
 		$("#dob").focus(function() {
 	         $( "#dob" ).datepicker({
-	        	changeMonth: true,
-	       	    changeYear: true,
-	       	    inline: true
+	        	 changeMonth: true,
+	       	     changeYear: true,
+	       	     inline: true,
+		       	 dateFormat: "yy-mm-dd",
+		         minDate: new Date('1971-01-01'),
+		         maxDate: new Date('2018-12-31')
 	         }); 
 		});
 

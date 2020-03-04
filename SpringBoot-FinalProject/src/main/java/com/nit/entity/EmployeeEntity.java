@@ -73,7 +73,6 @@ public class EmployeeEntity {
 	@Type(type = "string")
 	private String password;
 
-
 	@Column(name = "ACCOUNT_STATUS",length =10)
 	@Type(type = "string")
 	private String accountStatus;

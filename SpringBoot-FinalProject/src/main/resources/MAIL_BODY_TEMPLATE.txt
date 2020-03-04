@@ -7,7 +7,7 @@ Here are your details:<br/>
 <b>UserName</b>          : {USER_MAIL}<br/>
 <b>Temporary Password</b>: {TMP_PWD}<br/><br/>
 
-<a href="http://localhost:3131/Proj02-UserManagement/unlockAccForm?email={USER_MAIL}">Click here to Unlock the Account</a>
+<a href="http://localhost:3131/SpringBoot-FinalProject/unlockAccount?email={USER_MAIL}">Click here to Unlock the Account</a>
 <br/>
 Thanks and Regards,<br/>
 Teklead Family <br/>

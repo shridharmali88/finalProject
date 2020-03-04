@@ -23,6 +23,27 @@ public class MailUtil {
 	@Autowired
 	private JavaMailSender mailSender;
 
+	public boolean sendPasswordToEmail(EmployeeEntity emp) {
+		logger.debug(AppConstants.METHOD_START);
+		MimeMessage mimeMsg = null;
+		MimeMessageHelper helper=null; 
+		try {
+			// create message and set properties
+			mimeMsg = mailSender.createMimeMessage();
+			helper=new MimeMessageHelper(mimeMsg);
+			helper.setTo(emp.getEmail());
+			helper.setSubject(AppConstants.MAIL_SUB);
+			helper.setText(mailBodyForPwd(emp),true);
+			mailSender.send(mimeMsg);
+			logger.info(AppConstants.MAIL_SENT);
+			logger.debug(AppConstants.METHOD_ENDED);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public boolean sendEmail(EmployeeEntity emp) {
 		logger.debug(AppConstants.METHOD_START);
 		MimeMessage mimeMsg = null;
@@ -44,6 +65,41 @@ public class MailUtil {
 		return false;
 	}
 
+	private String mailBodyForPwd(EmployeeEntity entity) throws Exception {
+		logger.debug(AppConstants.METHOD_START);
+		Reader fileReader = null;
+		BufferedReader br = null;
+		String mailBody = new String();
+		StringBuilder builder = null;
+		try {
+			// Create builder
+			builder = new StringBuilder();
+			// get Reader
+			fileReader = new FileReader(new File(this.getClass().getClassLoader().getResource(AppConstants.FORGOT_PWD_MAIL_BODY_TEMPLETE).getFile()));
+			logger.info(AppConstants.MAIL_BODY_TEMPLETE_LOADED);
+			br = new BufferedReader(fileReader);
+			mailBody = br.readLine();
+			while (mailBody != null) {
+				builder.append(mailBody);
+				mailBody = br.readLine();
+			}
+			// convert builder to string
+			mailBody = builder.toString()
+								.replace("{FNAME}", entity.getFirstName())
+								.replace("{LNAME}", entity.getLastName())
+								.replace("{USER_MAIL}", entity.getEmail())
+								.replace("{PWD}", entity.getPassword());
+			logger.info(AppConstants.MAIL_BODY_READY);
+		} finally {
+			// close stream
+			if (br != null)
+				br.close();
+		}
+		logger.debug(AppConstants.METHOD_ENDED);
+		return mailBody;
+	}
+	
+	
 	private String mailBody(EmployeeEntity entity) throws Exception {
 		logger.debug(AppConstants.METHOD_START);
 		Reader fileReader = null;
@@ -54,7 +110,7 @@ public class MailUtil {
 			// Create builder
 			builder = new StringBuilder();
 			// get Reader
-			fileReader = new FileReader(new File(this.getClass().getClassLoader().getResource("MAIL_BODY_TEMPLATE.txt").getFile()));
+			fileReader = new FileReader(new File(this.getClass().getClassLoader().getResource(AppConstants.MAIL_BODY_TEMPLETE).getFile()));
 			logger.info(AppConstants.MAIL_BODY_TEMPLETE_LOADED);
 			br = new BufferedReader(fileReader);
 			mailBody = br.readLine();
