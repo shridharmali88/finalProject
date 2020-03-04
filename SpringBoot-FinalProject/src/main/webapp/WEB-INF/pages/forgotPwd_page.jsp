@@ -5,8 +5,10 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>forgotPwd page</title>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css'
+          rel='stylesheet'> 
+<script src= "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" ></script> 
 <script type="text/javascript">
 	$(document).ready(function(event) {
 		$("#email").blur(function() {

@@ -32,7 +32,7 @@ public class MailUtil {
 			mimeMsg = mailSender.createMimeMessage();
 			helper=new MimeMessageHelper(mimeMsg);
 			helper.setTo(emp.getEmail());
-			helper.setSubject(AppConstants.MAIL_SUB);
+			helper.setSubject(AppConstants.FORGOT_PWD_MAIL_SUB);
 			helper.setText(mailBodyForPwd(emp),true);
 			mailSender.send(mimeMsg);
 			logger.info(AppConstants.MAIL_SENT);

@@ -51,6 +51,7 @@ public class EmployeeEntity {
 	
 	@Column(name = "DOB")
 	@Type(type = "java.util.Date")
+	@Temporal(TemporalType.DATE)
 	private Date dob;
 
 	@Column(name = "GENDER",length = 5)
